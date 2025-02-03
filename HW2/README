@@ -24,3 +24,9 @@ Q5.
 
 Q6.
     Add a timezone property set to America/New_York in the Schedule trigger configuration
+
+
+Note: 
+    - GCP credentials saved in Key-value store of kestra and is used by flows for GCP authentication/setup.
+    - GCS bucket and BigQuery dataset created on GCP with a flow defined in kestra. 
+    - Used scheduled trigger and backfill feature in kestra to load data to BigQuery based on the defined flow.
