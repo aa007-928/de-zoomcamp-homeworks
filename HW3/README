@@ -1,0 +1,58 @@
+CREATE OR REPLACE EXTERNAL TABLE `strange-sun-448401-d8.de_zoomcamp_01.external_yellow_tripdata_2024`
+OPTIONS (
+  format = 'PARQUET',
+  uris = ['gs://strange-sun-448401-d8-bucket-1/yellow_tripdata_2024-*.parquet']
+);
+
+CREATE OR REPLACE TABLE `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024` AS
+SELECT * FROM `strange-sun-448401-d8.de_zoomcamp_01.external_yellow_tripdata_2024`;
+
+1.
+    SELECT COUNT(*) FROM `strange-sun-448401-d8.de_zoomcamp_01.external_yellow_tripdata_2024`;
+
+    - 20,332,093
+
+2.
+    SELECT COUNT(DISTINCT PULocationID) FROM `strange-sun-448401-d8.de_zoomcamp_01.external_yellow_tripdata_2024`;
+
+    SELECT COUNT(DISTINCT PULocationID) FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`;
+
+
+    - 0 MB for the External Table and 155.12 MB for the Materialized Table
+
+3.
+    SELECT PULocationID FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`;
+
+    SELECT PULocationID,DOLocationID FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`;
+
+4.
+    SELECT COUNT(*) FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`
+    WHERE fare_amount = 0;
+
+    - 8,333
+
+5.
+    CREATE OR REPLACE TABLE `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_partitioned_2024` 
+    PARTITION BY DATE(tpep_pickup_datetime)
+    CLUSTER BY VendorID AS
+    SELECT * FROM `strange-sun-448401-d8.de_zoomcamp_01.external_yellow_tripdata_2024`;
+
+    - Partition by tpep_dropoff_datetime and Cluster on VendorID
+
+6. 
+    SELECT DISTINCT VendorID FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`
+    WHERE DATE(tpep_dropoff_datetime) BETWEEN '2024-03-01' AND '2024-03-15';
+
+    - 310.24 MB for non-partitioned table and 26.84 MB for the partitioned table
+
+7.
+    - GCP Bucket
+
+8.
+    - false. Not required for small amount of data.
+
+9. 
+    SELECT * FROM `strange-sun-448401-d8.de_zoomcamp_01.regular_yellow_tripdata_non_partitioned_2024`;
+
+    - 2.72 GB, since we are getting all the columns
+
